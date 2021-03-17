@@ -1,0 +1,15 @@
+.checkboxes{
+  display: flex;
+  flex-direction: column;
+  &__row{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+  }
+  &__label{
+    flex: 3;
+  }
+  &__checkbox {
+    flex: 1;
+  }
+}
