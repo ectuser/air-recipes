@@ -7,9 +7,11 @@ import {FilterDialog} from "../FilterDialog/FilterDialog";
 import {observer} from "mobx-react-lite";
 import {Filter} from "../../interfaces/filter.interface";
 import {FilterCuisineCheckbox} from "../../interfaces/filter-cuisine-checkbox.interface";
-import {Recipe} from "../../interfaces/recipe.interface";
+import {useHistory} from "react-router";
+import CancelIcon from '@material-ui/icons/Cancel';
 
 export const Header = observer(() => {
+    const history = useHistory()
     const [searchText, setSearchText] = useState<string>('');
     const [filterData, setFilterData] = useState<Filter>({});
     const [isFilterDialogOpen, setIsFilterDialogOpen] = useState<boolean>(false);
@@ -28,7 +30,7 @@ export const Header = observer(() => {
 
     const processFilter = () => {
         const checkboxes: FilterCuisineCheckbox[] = recipesStore.cuisines.map(el => ({...el, checked: true}));
-        setFilterData({checkboxes, range: recipesStore.calories});
+        setFilterData({...filterData, checkboxes, range: recipesStore.calories});
         console.log(checkboxes, recipesStore.calories)
     }
 
@@ -37,6 +39,7 @@ export const Header = observer(() => {
     }
 
     const showResults = () => {
+        history.push('/');
         recipesStore.search(filterData);
     }
 
@@ -48,6 +51,10 @@ export const Header = observer(() => {
         if (event.key === 'Enter') {
             setFilterData({...filterData, searchString: searchText});
         }
+    }
+
+    const clearSearchString = () => {
+        setSearchText('');
     }
 
     return (
@@ -65,6 +72,11 @@ export const Header = observer(() => {
                                 <SearchIcon />
                             </InputAdornment>
                         ),
+                        endAdornment: searchText && (
+                            <InputAdornment style={{cursor: 'pointer'}} position="end" onClick={clearSearchString}>
+                                <CancelIcon/>
+                            </InputAdornment>
+                        )
                     }}
                 />
                 <IconButton color="primary" aria-label="Filter options" onClick={() => {setIsFilterDialogOpen(true)}}>
