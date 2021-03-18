@@ -5,26 +5,48 @@ import FilterListIcon from '@material-ui/icons/FilterList';
 import {recipesStore} from "../../store/recipes.store";
 import {FilterDialog} from "../FilterDialog/FilterDialog";
 import {observer} from "mobx-react-lite";
+import {Filter} from "../../interfaces/filter.interface";
+import {FilterCuisineCheckbox} from "../../interfaces/filter-cuisine-checkbox.interface";
+import {Recipe} from "../../interfaces/recipe.interface";
 
 export const Header = observer(() => {
     const [searchText, setSearchText] = useState<string>('');
+    const [filterData, setFilterData] = useState<Filter>({});
     const [isFilterDialogOpen, setIsFilterDialogOpen] = useState<boolean>(false);
 
+    console.log('render')
+
     useEffect(() => {
-        console.log(recipesStore.cuisines)
-    }, [])
+        processFilter();
+        showResults();
+    }, [recipesStore.cuisines, recipesStore.calories]);
+
+    useEffect(() => {
+        console.log('yeah');
+        showResults();
+    }, [filterData])
+
+    const processFilter = () => {
+        const checkboxes: FilterCuisineCheckbox[] = recipesStore.cuisines.map(el => ({...el, checked: true}));
+        setFilterData({checkboxes, range: recipesStore.calories});
+        console.log(checkboxes, recipesStore.calories)
+    }
 
     const onChange = ($event: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => {
         setSearchText($event.target.value);
     }
 
+    const showResults = () => {
+        recipesStore.search(filterData);
+    }
+
+    const onFilterSet = (filter: Filter) => {
+        setFilterData({...filterData, ...filter});
+    }
+
     const onKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
         if (event.key === 'Enter') {
-            if (searchText) {
-                recipesStore.search(searchText);
-            } else {
-                recipesStore.resetSearch();
-            }
+            setFilterData({...filterData, searchString: searchText});
         }
     }
 
@@ -50,7 +72,13 @@ export const Header = observer(() => {
                 </IconButton>
             </div>
 
-            <FilterDialog cuisines={recipesStore.cuisines} isOpen={isFilterDialogOpen} />
+            <FilterDialog
+                filter={filterData}
+                setFilterData={onFilterSet}
+                loadedCalories={recipesStore.calories}
+                isOpen={isFilterDialogOpen}
+                setIsOpen={setIsFilterDialogOpen}
+            />
         </div>
     )
 })

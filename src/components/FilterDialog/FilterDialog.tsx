@@ -5,40 +5,69 @@ import {
     DialogActions,
     DialogContent,
     DialogTitle,
-    FormControlLabel,
-    FormGroup,
     Divider, Slider
 } from "@material-ui/core";
 import {Cuisine} from "../../interfaces/cuisine.interface";
 import {FilterCuisineCheckbox} from "../../interfaces/filter-cuisine-checkbox.interface";
 import './FilterDialog.scss';
+import {RangeType} from "../../types/range.type";
+import {Filter} from "../../interfaces/filter.interface";
 
 export interface FilterDialogProps {
     isOpen: boolean;
-    cuisines: Cuisine[]
+    setIsOpen: (status: boolean) => void;
+    loadedCalories: RangeType;
+    setFilterData: (filter: Filter) => void;
+    filter: Filter;
 }
 
-export const FilterDialog = ({ isOpen, cuisines }: FilterDialogProps) => {
-    const [checkboxes, setCheckboxes] = useState<FilterCuisineCheckbox[]>()
+export const FilterDialog = ({ isOpen, loadedCalories, setFilterData, setIsOpen, filter }: FilterDialogProps) => {
+    const [checkboxes, setCheckboxes] = useState<FilterCuisineCheckbox[]>();
+    const [caloriesRange, setCaloriesRange] = useState<RangeType>([0, 10]);
+    const [filterChanged, setFilterChanged] = useState<boolean>(false);
 
     useEffect(() => {
-        processCheckboxes();
-    }, [cuisines]);
+        processProps();
+    }, [filter]);
 
-    const processCheckboxes = () => {
-        setCheckboxes(cuisines.map(el => ({...el, checked: false})));
+    const processProps = () => {
+        setCheckboxes(filter.checkboxes || []);
+        setCaloriesRange(filter.range || [0, 10]);
     }
 
-    const handleClose = () => {}
+    const handleSliderChange = (_: React.ChangeEvent<{}>, value: number | number[]) => {
+        setFilterChanged(true);
+        setCaloriesRange(value as RangeType);
+    }
 
-    const handleSubmit = () => {}
+    const handleCheckboxChange = (id: number, status: boolean) => {
+        setFilterChanged(true);
+        if (checkboxes){
+            const temp = [...checkboxes];
+            const index = temp.findIndex(el => el.id === id);
+            if (index !== -1){
+                temp[index] = {...temp[index], checked: status};
+                setCheckboxes(temp);
+            }
+        }
+    }
 
-    const handleClear = () => {}
+    const handleClose = () => {
+        setIsOpen(false);
+    }
+
+    const handleSubmit = () => {
+        setFilterData({range: caloriesRange, checkboxes: checkboxes});
+        handleClose();
+    }
+
+    const handleClear = () => {
+        setCheckboxes(checkboxes?.map(el => ({...el, checked: true})));
+        setCaloriesRange([loadedCalories[0], loadedCalories[1]]);
+    }
 
     return (
         <Dialog
-            disableBackdropClick
-            disableEscapeKeyDown
             aria-labelledby="confirmation-dialog-title"
             open={isOpen}
             onClose={handleClose}
@@ -49,20 +78,36 @@ export const FilterDialog = ({ isOpen, cuisines }: FilterDialogProps) => {
             <DialogContent>
                 <div className="checkboxes">
                     {checkboxes?.map(el => (
-                        <div>
+                        <div key={el.id}>
                             <div className="checkboxes__row" key={el.id}>
                                 <div className="checkboxes__label">{el.title}</div>
-                                <Checkbox className="checkboxes__checkbox" checked={el.checked} />
+                                <Checkbox
+                                    data-id={el.id.toString()}
+                                    className="checkboxes__checkbox"
+                                    checked={el.checked}
+                                    onChange={(_, status) => {handleCheckboxChange(el.id, status)}}
+                                />
                             </div>
                             <Divider/>
                         </div>
                     ))}
                 </div>
+                <Slider
+                    value={caloriesRange}
+                    onChange={handleSliderChange}
+                    valueLabelDisplay="auto"
+                    aria-labelledby="range-slider"
+                    min={loadedCalories[0]}
+                    max={loadedCalories[1]}
+                />
             </DialogContent>
             <DialogActions>
-                <Button onClick={handleClear} color="primary">
-                    Clear
-                </Button>
+                {
+                    filterChanged &&
+                    <Button onClick={handleClear} color="primary">
+                        Clear
+                    </Button>
+                }
                 <Button onClick={handleSubmit} color="primary">
                     Show Recipes
                 </Button>
