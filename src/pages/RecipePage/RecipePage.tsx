@@ -10,6 +10,8 @@ import {Difficulty} from '../../types/difficulty.type';
 import {recipeHelper, TimeEnum} from "../../utils/recipe.helper";
 import {RouteComponentProps} from 'react-router-dom';
 import {applicationColors} from "../../application-theme";
+// @ts-ignore
+import Carousel from "react-simply-carousel";
 
 const useStyles = makeStyles(theme => ({
     recipe: {
@@ -91,6 +93,7 @@ interface RecipePageProps extends RouteComponentProps<{id: string}>{
 }
 
 export const RecipePage = ({match}: RecipePageProps) => {
+    const [activeSlide, setActiveSlide] = useState(0);
     const recipeId = match.params.id;
     const [recipe, setRecipe] = useState<DetailedRecipe>();
     const [selectedImage, setSelectedImage] = useState<number>(0);
@@ -166,11 +169,40 @@ export const RecipePage = ({match}: RecipePageProps) => {
                         </ListItem>
                     ))}
                 </List>
+                <div>
+                </div>
+
+
             </div>
             {
                 recipe?.images.length !== 0 &&
                 <div className={classes.recipeColumn}>
-                    <img className={classes.mainImage} src={recipe?.images[selectedImage]} alt=""/>
+                    {recipe?.images && recipe?.images.length > 1 &&
+                        <Carousel
+                            updateOnItemClick
+                            activeSlideIndex={selectedImage}
+                            onRequestChange={setSelectedImage}
+                            forwardBtnProps={{
+                                style: {
+                                    display: 'none'
+                                }
+                            }}
+                            backwardBtnProps={{
+                                style: {
+                                    display: 'none',
+                                }
+                            }}
+                            itemsToShow={1}
+                            speed={400}
+                        >
+                            {recipe?.images.map((el, index) => (
+                                <img key={index} className={classes.mainImage} src={recipe?.images[selectedImage]} alt=""/>
+                            ))}
+                        </Carousel>
+                    }
+                    {recipe?.images && recipe?.images.length === 1 &&
+                        <img className={classes.mainImage} src={recipe?.images[selectedImage]} alt=""/>
+                    }
                     <div className={classes.otherImages}>
                         {recipe?.images.map((el, index) => (
                             <img onClick={() => {setSelectedImage(index)}} key={`images-${index}`} className={index !== selectedImage ? classes.subImage : [classes.subImage, classes.subImageActive].join(' ')} src={el} alt=""/>
