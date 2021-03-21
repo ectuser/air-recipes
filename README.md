@@ -5,4 +5,4 @@ $ yarn install
 $ cp .env.example .env
 
 # set config var: 
-REACT_APP_SERVER_URL=https://test.kode-t.ru/
+```REACT_APP_SERVER_URL=https://test.kode-t.ru/```
