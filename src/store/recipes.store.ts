@@ -64,7 +64,7 @@ class RecipesStore{
             tempArray = tempArray.filter(el => el.caloricity >= filter.range![0] && el.caloricity <= filter.range![1]);
         }
         if (filter.checkboxes) {
-            tempArray = tempArray.filter(el => filter.checkboxes?.find(checkbox => checkbox.id === el.id && checkbox.checked));
+            tempArray = tempArray.filter(el => filter.checkboxes?.find(checkbox => checkbox.id === el.cuisine.id && checkbox.checked));
         }
         this.setRecipes(tempArray);
     }

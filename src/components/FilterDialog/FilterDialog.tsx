@@ -5,13 +5,25 @@ import {
     DialogActions,
     DialogContent,
     DialogTitle,
-    Divider, Slider
+    Divider, IconButton, makeStyles, Slider, Theme, Typography
 } from "@material-ui/core";
-import {Cuisine} from "../../interfaces/cuisine.interface";
 import {FilterCuisineCheckbox} from "../../interfaces/filter-cuisine-checkbox.interface";
 import './FilterDialog.scss';
 import {RangeType} from "../../types/range.type";
 import {Filter} from "../../interfaces/filter.interface";
+import CloseIcon from '@material-ui/icons/Close';
+
+const useStyles = makeStyles({
+    closeButton: {
+        position: 'absolute',
+        right: 21,
+        top: 21,
+        padding: 0,
+    },
+    checkbox: {
+        paddingRight: 0,
+    }
+});
 
 export interface FilterDialogProps {
     isOpen: boolean;
@@ -25,6 +37,8 @@ export const FilterDialog = ({ isOpen, loadedCalories, setFilterData, setIsOpen,
     const [checkboxes, setCheckboxes] = useState<FilterCuisineCheckbox[]>();
     const [caloriesRange, setCaloriesRange] = useState<RangeType>([0, 10]);
     const [filterChanged, setFilterChanged] = useState<boolean>(false);
+
+    const classes = useStyles();
 
     useEffect(() => {
         processProps();
@@ -68,22 +82,33 @@ export const FilterDialog = ({ isOpen, loadedCalories, setFilterData, setIsOpen,
 
     return (
         <Dialog
-            aria-labelledby="confirmation-dialog-title"
             open={isOpen}
             onClose={handleClose}
             fullWidth={true}
             maxWidth="xs"
+            className="dialog"
         >
-            <DialogTitle>Filter</DialogTitle>
+            <DialogTitle>
+                <Typography variant="h3" component="h3">
+                    Filter
+                </Typography>
+                <IconButton color="secondary" className={classes.closeButton} aria-label="close" onClick={handleClose}>
+                    <CloseIcon />
+                </IconButton>
+            </DialogTitle>
             <DialogContent>
                 <div className="checkboxes">
                     {checkboxes?.map(el => (
                         <div key={el.id}>
                             <div className="checkboxes__row" key={el.id}>
-                                <div className="checkboxes__label">{el.title}</div>
+                                <div className="checkboxes__label">
+                                    <Typography variant="body1" component="div">
+                                        {el.title}
+                                    </Typography>
+                                </div>
                                 <Checkbox
                                     data-id={el.id.toString()}
-                                    className="checkboxes__checkbox"
+                                    className={`checkboxes__checkbox ${classes.checkbox}`}
                                     checked={el.checked}
                                     onChange={(_, status) => {handleCheckboxChange(el.id, status)}}
                                 />
@@ -93,22 +118,26 @@ export const FilterDialog = ({ isOpen, loadedCalories, setFilterData, setIsOpen,
                     ))}
                 </div>
                 <Slider
+                    color="secondary"
                     value={caloriesRange}
                     onChange={handleSliderChange}
-                    valueLabelDisplay="auto"
+                    valueLabelDisplay="on"
                     aria-labelledby="range-slider"
                     min={loadedCalories[0]}
                     max={loadedCalories[1]}
                 />
+                <Typography
+                    variant="body1"
+                    component="div"
+                >Calories, kCal</Typography>
             </DialogContent>
             <DialogActions>
                 {
-                    filterChanged &&
-                    <Button onClick={handleClear} color="primary">
+                    <Button style={{opacity: filterChanged ? 1 : 0}} variant="outlined" onClick={handleClear} color="secondary">
                         Clear
                     </Button>
                 }
-                <Button onClick={handleSubmit} color="primary">
+                <Button variant="contained" onClick={handleSubmit} color="secondary">
                     Show Recipes
                 </Button>
             </DialogActions>

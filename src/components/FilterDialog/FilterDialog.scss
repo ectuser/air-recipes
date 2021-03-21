@@ -1,6 +1,10 @@
+.dialog{
+  position: relative;
+}
 .checkboxes{
   display: flex;
   flex-direction: column;
+  margin-bottom: 72px;
   &__row{
     display: flex;
     flex-direction: row;

@@ -1,12 +1,14 @@
 import React from 'react';
-import {Home} from "./pages/Home/Home";
-import {Header} from "./components/Header/Header";
 import {ApplicationRouter} from "./ApplicationRouter";
+import {MuiThemeProvider} from "@material-ui/core";
+import {theme} from "./application-theme";
 require('dotenv').config();
 
 const App = () => {
     return (
-      <ApplicationRouter/>
+        <MuiThemeProvider theme={theme}>
+            <ApplicationRouter/>
+        </MuiThemeProvider>
     );
 }
 

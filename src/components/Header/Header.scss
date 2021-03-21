@@ -1,0 +1,23 @@
+@import "../../colors/variables";
+div.header{
+  display: flex;
+  margin-bottom: 32px;
+  overflow: hidden;
+  &__search{
+    margin-left: 90px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+  }
+  &__search-bar{
+    margin-top: 32px;
+    display: flex;
+    align-items: center;
+  }
+  &__input-icon {
+    color: $shade40;
+  }
+  &__end-icon {
+    cursor: pointer;
+  }
+}

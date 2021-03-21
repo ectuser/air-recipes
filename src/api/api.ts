@@ -4,7 +4,7 @@ import {Recipe} from "../interfaces/recipe.interface";
 
 class Api {
     private serverUrl = appConfig.serverUrl;
-    async fetchRecipe(id: number): Promise<DetailedRecipe>{
+    async fetchRecipe(id: string): Promise<DetailedRecipe>{
         return fetch(`${this.serverUrl}detail_${id}.json`)
             .then(res => res.json())
             .then(res => res.recipe);
