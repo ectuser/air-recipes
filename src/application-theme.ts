@@ -1,11 +1,21 @@
 import {createMuiTheme} from "@material-ui/core";
-import {appConfig} from './app-config';
+
+export const applicationColors = {
+    $base0: '#000',
+    $base1: '#FFF',
+    $shade20: '#DDDDDD',
+    $shade40: '#A9A9A9',
+    $shade50: '#82786A',
+    $easy: '#2FB65D',
+    $medium: '#EB8A31',
+    $hard: '#EB3C31',
+}
 
 
 export const theme = createMuiTheme({
     palette: {
         secondary: {
-            main: appConfig.themeColors.$shade50,
+            main: applicationColors.$shade50,
         },
     },
     typography: {
@@ -52,7 +62,7 @@ export const theme = createMuiTheme({
                 borderRadius: 28,
                 '&$focused $notchedOutline': {
                     border: '1px solid',
-                    borderColor: appConfig.themeColors.$shade40,
+                    borderColor: applicationColors.$shade40,
                 }
             },
         },
@@ -63,12 +73,12 @@ export const theme = createMuiTheme({
         },
         MuiChip: {
             root:{
-                backgroundColor: appConfig.themeColors.$base1,
+                backgroundColor: applicationColors.$base1,
             }
         },
         MuiTouchRipple: {
             ripple:{
-                backgroundColor: appConfig.themeColors.$shade20,
+                backgroundColor: applicationColors.$shade20,
             }
         },
         MuiSvgIcon: {

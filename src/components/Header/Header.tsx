@@ -10,16 +10,39 @@ import {FilterCuisineCheckbox} from "../../interfaces/filter-cuisine-checkbox.in
 import {useHistory, useLocation} from "react-router";
 import CancelIcon from '@material-ui/icons/Cancel';
 import HeaderImage from '../../assets/header-image.png'
-import './Header.scss';
-import {appConfig} from "../../app-config";
+import {applicationColors} from "../../application-theme";
 
-const useStyles = makeStyles({
+const useStyles = makeStyles(theme => ({
+    header: {
+        display: 'flex',
+        marginBottom: '60px',
+    },
+    searchColumn: {
+        marginLeft: '90px',
+        display:'flex',
+        flexDirection: 'column',
+        justifyContent: 'flex-end',
+    },
+    searchBar: {
+        marginTop: theme.spacing(4),
+        display: 'flex',
+        alignItems: 'center',
+    },
+    inputIcon: {
+        color: applicationColors.$shade40,
+    },
+    endIcon: {
+        cursor: 'pointer',
+    },
     iconButton: {
         border: '1px solid',
-        borderColor: appConfig.themeColors.$shade20,
+        borderColor: applicationColors.$shade20,
         padding: '15px 15px',
     },
-});
+    image: {
+        overflow: 'hidden',
+    }
+}));
 
 export const Header = observer(() => {
     const history = useHistory();
@@ -63,6 +86,7 @@ export const Header = observer(() => {
     }
 
     const showResults = () => {
+        console.log('show results')
         history.push('/');
         recipesStore.search(filterData);
     }
@@ -94,18 +118,17 @@ export const Header = observer(() => {
 
 
     return (
-        <div className="header" style={{height: changeByOffset(292, 600)}}>
-            <div className="header__search" style={{marginBottom: changeByOffset(-20, 280, 1.4)}}>
+        <div className={classes.header} style={{height: changeByOffset(292, 600)}}>
+            <div className={classes.searchColumn} style={{marginBottom: changeByOffset(-28, 270, 1.4)}}>
                 <Typography variant="h1" component="h1">
                     Air Recipes
                 </Typography>
                 <Typography variant="body1" color="textSecondary" component="p">
                     Best Recipes for Best People
                 </Typography>
-                <div className="header__search-bar">
+                <div className={classes.searchBar}>
                     <Box marginRight={2}>
                         <TextField
-                            className="header__input"
                             value={searchText}
                             placeholder="Search"
                             variant="outlined"
@@ -113,12 +136,12 @@ export const Header = observer(() => {
                             onKeyDown={onKeyDown}
                             InputProps={{
                                 startAdornment: (
-                                    <InputAdornment className="header__input-icon" position="start">
+                                    <InputAdornment className={classes.inputIcon} position="start">
                                         <SearchIcon />
                                     </InputAdornment>
                                 ),
                                 endAdornment: searchText && (
-                                    <InputAdornment className="header__input-icon header__end-icon" position="end" onClick={clearSearchString}>
+                                    <InputAdornment className={[classes.inputIcon, classes.endIcon].join(' ')} position="end" onClick={clearSearchString}>
                                         <CancelIcon fontSize={"small"} />
                                     </InputAdornment>
                                 )
@@ -132,8 +155,8 @@ export const Header = observer(() => {
                     </Box>
                 </div>
             </div>
-            <div className="header__image">
-                    <img src={HeaderImage} alt="123"/>
+            <div className={classes.image}>
+                <img src={HeaderImage} alt="123"/>
             </div>
             <FilterDialog
                 filter={filterData}

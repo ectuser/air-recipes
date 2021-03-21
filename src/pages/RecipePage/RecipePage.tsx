@@ -1,16 +1,91 @@
 import React, {useEffect, useState} from "react";
 import {api} from "../../api/api";
 import {DetailedRecipe} from "../../interfaces/detailed-recipe.interface";
-import { List, ListItem, SvgIcon, Typography} from "@material-ui/core";
-import './RecipePage.scss';
+import {List, ListItem, makeStyles, SvgIcon, Typography} from "@material-ui/core";
 import {ReactComponent as DifficultyIcon} from '../../assets/difficultyIcon.svg';
 import {ReactComponent as CaloriesIcon} from '../../assets/caloriesIcon.svg';
 import {ReactComponent as TimeIcon} from '../../assets/timeIcon.svg';
 import {ReactComponent as CuisneIcon} from '../../assets/cuisineIcon.svg';
 import {Difficulty} from '../../types/difficulty.type';
 import {recipeHelper, TimeEnum} from "../../utils/recipe.helper";
-import {appConfig} from "../../app-config";
 import {RouteComponentProps} from 'react-router-dom';
+import {applicationColors} from "../../application-theme";
+
+const useStyles = makeStyles(theme => ({
+    recipe: {
+        padding: '0 98px',
+        display: 'flex',
+    },
+    recipeColumn: {
+        flex: 1,
+        '&:not(:last-child)': {
+            marginRight: '20px',
+        }
+    },
+    recipeIngredients: {
+        listStyle: 'none',
+        marginBottom: '32px',
+    },
+    recipeIngredient: {
+        position: 'relative',
+        '&::before': {
+            content: '"."',
+            fontSize: '30px',
+            position: 'absolute',
+            height: '20px',
+            width: '20px',
+            transform: 'translateY(-50%)',
+        },
+        '&:not(:last-child)': {
+            marginBottom: '10px',
+        },
+    },
+    recipeInstructionsCircle: {
+        borderRadius: '50%',
+        border: '1px solid',
+        borderColor: applicationColors.$shade20,
+        padding: '3px 5px',
+        marginRight: theme.spacing(1),
+    },
+    recipeInstructionsItem: {
+        paddingLeft: '0',
+    },
+    metadata: {
+        marginTop: theme.spacing(2),
+        marginBottom: theme.spacing(4),
+        display: 'flex',
+        flexDirection: 'row',
+    },
+    metadataItem: {
+        display: 'flex',
+        '&:not(:last-child)': {
+            marginRight: theme.spacing(4),
+        }
+    },
+    metadataIcon: {
+        marginRight: '10px',
+    },
+    mainImage: {
+        width: '532px',
+        height: '355px',
+    },
+    otherImages: {
+        marginTop: theme.spacing(2)
+    },
+    subImage: {
+        width: '56px',
+        height: '56px',
+        cursor: 'pointer',
+        '&:not(:last-child)': {
+            marginRight: theme.spacing(1),
+        }
+    },
+    subImageActive: {
+        border: '2px solid',
+        borderColor: applicationColors.$base0,
+        boxSizing: 'border-box',
+    }
+}))
 
 interface RecipePageProps extends RouteComponentProps<{id: string}>{
 }
@@ -20,7 +95,8 @@ export const RecipePage = ({match}: RecipePageProps) => {
     const [recipe, setRecipe] = useState<DetailedRecipe>();
     const [selectedImage, setSelectedImage] = useState<number>(0);
     const timeData = recipe?.cookTime ? recipeHelper.convertSeconds(recipe.cookTime) : '';
-    const difficulties: Record<Difficulty, string> = {easy: appConfig.themeColors.$easy, medium: appConfig.themeColors.$medium, hard: appConfig.themeColors.$hard};
+    const difficulties: Record<Difficulty, string> = {easy: applicationColors.$easy, medium: applicationColors.$medium, hard: applicationColors.$hard};
+    const classes = useStyles();
 
     useEffect(() => {
         if (recipeId) {
@@ -40,19 +116,19 @@ export const RecipePage = ({match}: RecipePageProps) => {
     }, [recipe, selectedImage])
 
     return (
-        <div className="recipe">
-            <div className="recipe__column">
+        <div className={classes.recipe}>
+            <div className={classes.recipeColumn}>
                 <Typography variant="h2" component="h2">{recipe?.title}</Typography>
                 <Typography variant="body1" component="div">{recipe?.description}</Typography>
-                <div className="metadata">
-                    <div className="metadata__item">
-                        <SvgIcon style={{color: recipe?.difficulty ? difficulties[recipe.difficulty] : 'black'}} className="metadata__icon">
+                <div className={classes.metadata}>
+                    <div style={{color: recipe?.difficulty ? difficulties[recipe.difficulty] : 'black'}} className={classes.metadataItem}>
+                        <SvgIcon className={classes.metadataIcon}>
                             <DifficultyIcon/>
                         </SvgIcon>
                         <Typography variant="body1" component="div">{recipe?.difficulty && recipeHelper.capitalizeFirstLetter(recipe.difficulty)}</Typography>
                     </div>
-                    <div className="metadata__item">
-                        <SvgIcon className="metadata__icon">
+                    <div className={classes.metadataItem}>
+                        <SvgIcon className={classes.metadataIcon}>
                             <TimeIcon/>
                         </SvgIcon>
                         {
@@ -60,32 +136,32 @@ export const RecipePage = ({match}: RecipePageProps) => {
                             <Typography variant="body1" component="div">{timeData.time} {TimeEnum[timeData.type]}</Typography>
                         }
                     </div>
-                    <div className="metadata__item">
-                        <SvgIcon className="metadata__icon">
+                    <div className={classes.metadataItem}>
+                        <SvgIcon className={classes.metadataIcon}>
                             <CaloriesIcon/>
                         </SvgIcon>
                         <Typography variant="body1" component="div">{recipe?.caloricity} kCal</Typography>
                     </div>
-                    <div className="metadata__item">
-                        <SvgIcon className="metadata__icon">
+                    <div className={classes.metadataItem}>
+                        <SvgIcon className={classes.metadataIcon}>
                             <CuisneIcon/>
                         </SvgIcon>
                         <Typography variant="body1" component="div">{recipe?.cuisine.title}</Typography>
                     </div>
                 </div>
                 <Typography variant="h3" component="h3">Ingredients</Typography>
-                <List className="recipe__ingredients">
+                <List className={classes.recipeIngredients}>
                     {recipe?.ingredients.map((el, index) => (
-                        <ListItem key={`ingredients-${index}`}>
-                            <Typography variant="body1" component="li">{el}</Typography>
-                        </ListItem>
+                        <Typography className={classes.recipeIngredient} key={`ingredients-${index}`} variant="body1" component="li">
+                            <div style={{marginLeft: '15px'}}>{el}</div>
+                        </Typography>
                     ))}
                 </List>
                 <Typography variant="h3" component="h3">Instructions</Typography>
-                <List className="recipe__instructions">
+                <List>
                     {recipe?.instructions.map((el, index) => (
-                        <ListItem key={`instructions-${index}`} className="recipe__instructions-item">
-                            <Typography variant="subtitle2" component="div" className="recipe__instructions-circle">{index + 1}</Typography>
+                        <ListItem key={`instructions-${index}`} className={classes.recipeInstructionsItem}>
+                            <Typography variant="subtitle2" component="div" className={classes.recipeInstructionsCircle}>{index + 1}</Typography>
                             <Typography variant="body1" component="div">{el}</Typography>
                         </ListItem>
                     ))}
@@ -93,11 +169,11 @@ export const RecipePage = ({match}: RecipePageProps) => {
             </div>
             {
                 recipe?.images.length !== 0 &&
-                <div className="recipe__column images">
-                    <img className="images__main-image" src={recipe?.images[selectedImage]} alt=""/>
-                    <div className="images__other-images">
+                <div className={classes.recipeColumn}>
+                    <img className={classes.mainImage} src={recipe?.images[selectedImage]} alt=""/>
+                    <div className={classes.otherImages}>
                         {recipe?.images.map((el, index) => (
-                            <img onClick={() => {setSelectedImage(index)}} key={`images-${index}`} className={index !== selectedImage ? 'images__sub-image' : 'images__sub-image_active'} src={el} alt=""/>
+                            <img onClick={() => {setSelectedImage(index)}} key={`images-${index}`} className={index !== selectedImage ? classes.subImage : [classes.subImage, classes.subImageActive].join(' ')} src={el} alt=""/>
                         ))}
                     </div>
                 </div>

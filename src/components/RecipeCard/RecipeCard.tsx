@@ -1,8 +1,28 @@
 import React, {useEffect, useState} from "react";
 import {Recipe} from "../../interfaces/recipe.interface";
-import {Card, CardContent, CardMedia, Chip, Typography} from "@material-ui/core";
-import './RecipeCard.scss';
+import {Card, CardContent, CardMedia, Chip, makeStyles, Typography} from "@material-ui/core";
 import {recipeHelper, TimeEnum} from "../../utils/recipe.helper";
+
+const useStyles = makeStyles(theme => ({
+    card: {
+        width: '348px',
+        height: '384px',
+    },
+    cardMedia: {
+        height: '196px',
+        position: 'relative',
+    },
+    chipList: {
+        position: 'absolute',
+        right: theme.spacing(2),
+        bottom: theme.spacing(2),
+    },
+    chip:{
+        '&:not(:last-child)': {
+            marginRight: theme.spacing(1),
+        }
+    }
+}))
 
 interface RecipeCardProps {
     recipe: Recipe;
@@ -11,6 +31,7 @@ interface RecipeCardProps {
 export const RecipeCard = ({recipe}: RecipeCardProps) => {
     const timeData = recipeHelper.convertSeconds(recipe.cookTime);
     const [cardDescription, setCardDescription] = useState(recipe.description);
+    const classes = useStyles();
 
     useEffect(() => {
         if (cardDescription.length >= 147) {
@@ -19,16 +40,16 @@ export const RecipeCard = ({recipe}: RecipeCardProps) => {
     }, [])
 
     return (
-        <Card className="card">
+        <Card className={classes.card}>
             <CardMedia
-                className="card__media"
+                className={classes.cardMedia}
                 image={recipe.thumbnail}
                 title={recipe.title}
             >
-                <div className="card__chip-list">
-                    <Chip className="card__chip" label={`${timeData.time} ${TimeEnum[timeData.type]}`} />
-                    <Chip className="card__chip" label={`${recipe.caloricity} kCal`}/>
-                    <Chip className="card__chip" label={recipe.cuisine.title} />
+                <div className={classes.chipList}>
+                    <Chip className={classes.chip} label={`${timeData.time} ${TimeEnum[timeData.type]}`} />
+                    <Chip className={classes.chip} label={`${recipe.caloricity} kCal`}/>
+                    <Chip className={classes.chip} label={recipe.cuisine.title} />
                 </div>
             </CardMedia>
             <CardContent>

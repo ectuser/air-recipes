@@ -2,7 +2,6 @@ import React, {useEffect} from 'react';
 import {recipesStore} from "../../store/recipes.store";
 import {observer} from "mobx-react-lite";
 import {RecipeCard} from "../../components/RecipeCard/RecipeCard";
-import './Home.scss';
 import {Link} from "react-router-dom";
 import {makeStyles} from "@material-ui/core";
 
@@ -11,6 +10,7 @@ const useStyles = makeStyles({
         display: 'grid',
         padding: '0 98px',
         margin: '0 auto',
+        boxSizing: 'border-box',
         gridGap: '24px 20px',
         gridTemplateColumns: '1fr 1fr 1fr',
     },

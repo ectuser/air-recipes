@@ -5,25 +5,40 @@ import {
     DialogActions,
     DialogContent,
     DialogTitle,
-    Divider, IconButton, makeStyles, Slider, Theme, Typography
+    Divider, IconButton, makeStyles, Slider, Typography
 } from "@material-ui/core";
 import {FilterCuisineCheckbox} from "../../interfaces/filter-cuisine-checkbox.interface";
-import './FilterDialog.scss';
 import {RangeType} from "../../types/range.type";
 import {Filter} from "../../interfaces/filter.interface";
 import CloseIcon from '@material-ui/icons/Close';
 
-const useStyles = makeStyles({
+const useStyles = makeStyles(theme => ({
+    dialog: {
+        position: 'relative',
+    },
+    checkboxes: {
+        display: 'flex',
+        flexDirection: 'column',
+        marginBottom: theme.spacing(9),
+    },
+    checkbox: {
+        paddingRight: 0,
+    },
+    row: {
+        display: 'flex',
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+    },
+    label: {
+    },
     closeButton: {
         position: 'absolute',
         right: 21,
         top: 21,
         padding: 0,
     },
-    checkbox: {
-        paddingRight: 0,
-    }
-});
+}));
 
 export interface FilterDialogProps {
     isOpen: boolean;
@@ -86,7 +101,7 @@ export const FilterDialog = ({ isOpen, loadedCalories, setFilterData, setIsOpen,
             onClose={handleClose}
             fullWidth={true}
             maxWidth="xs"
-            className="dialog"
+            className={classes.dialog}
         >
             <DialogTitle>
                 <Typography variant="h3" component="h3">
@@ -97,18 +112,18 @@ export const FilterDialog = ({ isOpen, loadedCalories, setFilterData, setIsOpen,
                 </IconButton>
             </DialogTitle>
             <DialogContent>
-                <div className="checkboxes">
+                <div className={classes.checkboxes}>
                     {checkboxes?.map(el => (
                         <div key={el.id}>
-                            <div className="checkboxes__row" key={el.id}>
-                                <div className="checkboxes__label">
+                            <div className={classes.row} key={el.id}>
+                                <div className={classes.label}>
                                     <Typography variant="body1" component="div">
                                         {el.title}
                                     </Typography>
                                 </div>
                                 <Checkbox
                                     data-id={el.id.toString()}
-                                    className={`checkboxes__checkbox ${classes.checkbox}`}
+                                    className={classes.checkbox}
                                     checked={el.checked}
                                     onChange={(_, status) => {handleCheckboxChange(el.id, status)}}
                                 />
