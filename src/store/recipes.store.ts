@@ -55,7 +55,6 @@ class RecipesStore{
     }
 
     search(filter: Filter) {
-        console.log(filter)
         let tempArray = [...this.loadedRecipes];
         if (filter.searchString){
             tempArray = tempArray.filter(el => el.title.toLocaleLowerCase().includes(filter.searchString!.toLocaleLowerCase()));

@@ -8,14 +8,20 @@ import {observer} from "mobx-react-lite";
 import {Filter} from "../../interfaces/filter.interface";
 import {FilterCuisineCheckbox} from "../../interfaces/filter-cuisine-checkbox.interface";
 import {useHistory, useLocation} from "react-router";
+import {Link} from 'react-router-dom';
 import CancelIcon from '@material-ui/icons/Cancel';
 import HeaderImage from '../../assets/header-image.png'
 import {applicationColors} from "../../application-theme";
+
 
 const useStyles = makeStyles(theme => ({
     header: {
         display: 'flex',
         marginBottom: '60px',
+    },
+    title: {
+        textDecoration: 'none',
+        color: applicationColors.$base0,
     },
     searchColumn: {
         marginLeft: '90px',
@@ -52,7 +58,6 @@ export const Header = observer(() => {
     const [filterData, setFilterData] = useState<Filter>({});
     const [isFilterDialogOpen, setIsFilterDialogOpen] = useState<boolean>(false);
 
-    console.log('render');
 
     useEffect(() => {
         window.addEventListener('scroll', parallaxShift);
@@ -67,18 +72,15 @@ export const Header = observer(() => {
 
     useEffect(() => {
         processFilter();
-        showResults();
     }, [recipesStore.cuisines, recipesStore.calories]);
 
     useEffect(() => {
-        console.log('yeah');
         showResults();
-    }, [filterData])
+    }, [filterData]);
 
     const processFilter = () => {
         const checkboxes: FilterCuisineCheckbox[] = recipesStore.cuisines.map(el => ({...el, checked: true}));
         setFilterData({...filterData, checkboxes, range: recipesStore.calories});
-        console.log(checkboxes, recipesStore.calories)
     }
 
     const onChange = ($event: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => {
@@ -86,24 +88,27 @@ export const Header = observer(() => {
     }
 
     const showResults = () => {
-        console.log('show results')
-        history.push('/');
         recipesStore.search(filterData);
     }
 
-    const onFilterSet = (filter: Filter) => {
+    const onSubmit = (filter: Filter) => {
+        history.push('/');
         setFilterData({...filterData, ...filter});
+    }
+
+    const onFilterSet = (filter: Filter) => {
+        onSubmit({...filterData, ...filter});
     }
 
     const onKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
         if (event.key === 'Enter') {
-            setFilterData({...filterData, searchString: searchText});
+            onSubmit({...filterData, searchString: searchText});
         }
     }
 
     const clearSearchString = () => {
         setSearchText('');
-        setFilterData({...filterData, searchString: ''});
+        onSubmit({...filterData, searchString: ''});
     }
 
     const classes = useStyles();
@@ -120,9 +125,11 @@ export const Header = observer(() => {
     return (
         <div className={classes.header} style={{height: changeByOffset(292, 600)}}>
             <div className={classes.searchColumn} style={{marginBottom: changeByOffset(-28, 270, 1.4)}}>
-                <Typography variant="h1" component="h1">
-                    Air Recipes
-                </Typography>
+                <Link to="/" className={classes.title}>
+                    <Typography variant="h1" component="h1">
+                        Air Recipes
+                    </Typography>
+                </Link>
                 <Typography variant="body1" color="textSecondary" component="p">
                     Best Recipes for Best People
                 </Typography>
